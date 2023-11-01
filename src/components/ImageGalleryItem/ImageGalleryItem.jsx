@@ -12,6 +12,7 @@ export default function ImageGalleryItem({ images, onClick }) {
               src={item.webformatURL}
               id={item.id}
               onClick={onClick}
+              alt=""
             />
           </li>
         );
