@@ -27,20 +27,26 @@ export class App extends Component {
   componentDidUpdate(_, prevState) {
     const prevSearch = prevState.inputValue;
     const nextSearch = this.state.inputValue;
+    const prevPage = prevState.page;
+    const nextPage = this.state.page;
 
-    const page = this.state.page;
-
-    if (prevSearch !== nextSearch || prevState.page !== this.state.page) {
-      this.setState({ loading: true, images: [] });
-
-      fetchPhotos(nextSearch, page)
+    if (prevSearch !== nextSearch || prevPage !== nextPage) {
+      this.setState({ loading: true, showLoadMore: false });
+      fetchPhotos(nextSearch, nextPage)
         .then(data => {
-          console.log('data', data);
-          console.log('data.total', data.total);
-
           this.setState({ totalPhotos: data.total });
           if (data.total < 1) {
             this.setState({ error: true });
+            toast.info('УПС! 🫤 Відсутні фото за Вашим пошуком 🤷🏻', {
+              position: 'top-right',
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: 'colored',
+            });
           } else {
             this.setState(prevState => ({
               images: [...prevState.images, ...data.hits],
@@ -48,11 +54,7 @@ export class App extends Component {
               loading: false,
             }));
 
-            console.log('длина массива', data.hits.length);
-            console.log('всего фото', data.total);
-
             if (data.hits.length >= data.total) {
-              console.log('no more photos');
             } else {
               this.toggleLoadMore();
             }
@@ -70,13 +72,11 @@ export class App extends Component {
         });
     }
   }
-  //////
   toggleLoadMore = () => {
     this.setState(({ showLoadMore }) => ({
       showLoadMore: !showLoadMore,
     }));
   };
-  //////
 
   handleChange = e => {
     this.setState({ inputValue: e.target.value.toLowerCase().trim() });
@@ -86,7 +86,7 @@ export class App extends Component {
     e.preventDefault();
     const searchValue = e.currentTarget.elements.input.value;
     if (searchValue.trim() === '') {
-      toast.warn('Enter Search value', {
+      toast.warn('УПС! 🫤 Введіть значення для пошуку ⌨️ ', {
         position: 'top-right',
         autoClose: 4000,
         hideProgressBar: false,
@@ -98,8 +98,13 @@ export class App extends Component {
       });
       return;
     } else {
-      // this.props.onSubmit(this.state.inputValue);
-      this.setState({ inputValue: searchValue });
+      this.setState({
+        inputValue: searchValue,
+        loading: true,
+        images: [],
+        page: 1,
+        showLoadMore: false,
+      });
     }
   };
 
@@ -110,7 +115,6 @@ export class App extends Component {
   };
 
   currentPhoto = e => {
-    console.log('App - e.target.id:', e.target.id);
     this.setState({ currentImgInd: e.target.id });
     this.toggleModal();
   };
@@ -124,10 +128,9 @@ export class App extends Component {
       loading,
       images,
       showModal,
-      showLoadMore,
       currentImgInd,
-      error,
       totalPhotos,
+      showLoadMore,
     } = this.state;
 
     return (
@@ -136,14 +139,9 @@ export class App extends Component {
         <ToastContainer />
         {loading && <Loader />}
 
-        {error && <h1>Нет данных соответствующих введенному запросу</h1>}
         <ImageGallery images={images} onClick={this.currentPhoto} />
-        {/* {console.log('showLoadMore', showLoadMore)} */}
-        {/* {showLoadMore && <Button onClick={this.renderMore}>Load more</Button>} */}
-        {console.log('totalPhotos:', totalPhotos)}
-        {console.log('images.length', images.length)}
 
-        {totalPhotos > images.length && (
+        {totalPhotos > images.length && showLoadMore && (
           <Button onClick={this.renderMore}>Load more</Button>
         )}
 
@@ -160,56 +158,3 @@ export class App extends Component {
 }
 
 export default App;
-
-//
-//
-//
-//
-//
-//
-
-// render() {
-//     const { loading, value, images, status, showModal, showLoadMore } =
-//       this.state;
-//     if (status === 'idle') {
-//       return (
-//         <>
-//           <Searchbar onSubmit={this.handleSubmit} />
-//           <ToastContainer />
-//         </>
-//       );
-//     }
-//     if (status === 'pending') {
-//       return (
-//         <>
-//           <Searchbar onSubmit={this.handleSubmit} />
-//           <ToastContainer />
-//           <Loader />
-//         </>
-//       );
-//     }
-//     if (status === 'rejected') {
-//       return <h1>Нет данных соответствующих введенному запросу</h1>;
-//     }
-//     if (status === 'resolved') {
-//       return (
-//         <div className={css.app}>
-//           <Searchbar onSubmit={this.handleSubmit} />
-//           <ToastContainer />
-//           <ImageGallery
-//             images={this.state.images}
-//             onClick={this.currentPhoto}
-//           />
-
-//           {showLoadMore && <Button onClick={this.renderMore}>Load more</Button>}
-//           {showModal && (
-//             <Modal
-//               onClose={this.toggleModal}
-//               photos={this.state.images}
-//               currentImgInd={this.state.currentImgInd}
-//             ></Modal>
-//           )}
-//         </div>
-//       );
-//     }
-//   }

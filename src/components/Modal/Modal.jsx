@@ -1,4 +1,3 @@
-import * as basicLightbox from 'basiclightbox';
 import React, { Component } from 'react';
 import { createPortal } from 'react-dom';
 import css from './Modal.module.css';
@@ -32,7 +31,6 @@ export default class Modal extends Component {
     photos.map(item => {
       if (+currentImgInd === item.id) {
         currentPhoto = item.largeImageURL;
-        return;
       }
     });
 

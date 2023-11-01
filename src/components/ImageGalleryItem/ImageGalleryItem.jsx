@@ -10,7 +10,6 @@ export default function ImageGalleryItem({ images, onClick }) {
             <img
               className={css.imageItem}
               src={item.webformatURL}
-              // width="300"
               id={item.id}
               onClick={onClick}
             />

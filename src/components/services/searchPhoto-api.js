@@ -10,10 +10,8 @@ export default async function fetchPhotos(nextSearch, page) {
       throw new Error('Ошибка при запросе данных');
     }
     const data = await response.json();
-    // console.log('Данные после response.json():', data);
     return data;
   } catch (error) {
-    // console.error('Ошибка после response.json():', error);
     throw error;
   }
 }
