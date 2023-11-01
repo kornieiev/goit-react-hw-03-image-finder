@@ -32,6 +32,7 @@ export default class Modal extends Component {
       if (+currentImgInd === item.id) {
         currentPhoto = item.largeImageURL;
       }
+      return currentPhoto;
     });
 
     return createPortal(
