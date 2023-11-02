@@ -96,9 +96,8 @@ export class App extends Component {
     }));
   };
 
-  currentPhoto = e => {
-    this.setState({ largeImageURL: e.target.id });
-
+  currentPhoto = largeImageURL => {
+    this.setState({ largeImageURL: largeImageURL });
     this.toggleModal();
   };
 
