@@ -25,20 +25,12 @@ export default class Modal extends Component {
   };
 
   render() {
-    const { photos, currentImgInd } = this.props;
-
-    let currentPhoto = '';
-    photos.map(item => {
-      if (+currentImgInd === item.id) {
-        currentPhoto = item.largeImageURL;
-      }
-      return currentPhoto;
-    });
+    const { largeImageURL } = this.props;
 
     return createPortal(
       <div className={css.overlay} onClick={this.handleBackDropClick}>
         <div className={css.modal}>
-          <img className={css.img} src={currentPhoto} alt="" />
+          <img className={css.img} src={largeImageURL} alt="" />
         </div>
       </div>,
       modalRoot

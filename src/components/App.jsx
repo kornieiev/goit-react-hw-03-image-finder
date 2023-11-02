@@ -18,7 +18,7 @@ export class App extends Component {
     images: [], // данные из Api
     error: null, // статус ошибки
     showModal: false, // статус отображения модалки
-    currentImgInd: 0, // id выбранного фото
+    largeImageURL: 0, // id выбранного фото
     totalPhotos: 0, // всего фото в коллекции
     showLoadMore: false, // статус отображения кнопки LoadMore
     page: 1, // страница загрузки с Api
@@ -37,16 +37,7 @@ export class App extends Component {
           this.setState({ totalPhotos: data.total });
           if (data.total < 1) {
             this.setState({ error: true });
-            toast.info('УПС! 🫤 Відсутні фото за Вашим пошуком 🤷🏻', {
-              position: 'top-right',
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: 'colored',
-            });
+            toast.info('УПС! 🫤 Відсутні фото за Вашим пошуком 🤷🏻');
           } else {
             this.setState(prevState => ({
               images: [...prevState.images, ...data.hits],
@@ -86,16 +77,7 @@ export class App extends Component {
     e.preventDefault();
     const searchValue = e.currentTarget.elements.input.value;
     if (searchValue.trim() === '') {
-      toast.warn('УПС! 🫤 Введіть значення для пошуку ⌨️ ', {
-        position: 'top-right',
-        autoClose: 4000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: 'colored',
-      });
+      toast.warn('УПС! 🫤 Введіть значення для пошуку ⌨️ ');
       return;
     } else {
       this.setState({
@@ -115,7 +97,8 @@ export class App extends Component {
   };
 
   currentPhoto = e => {
-    this.setState({ currentImgInd: e.target.id });
+    this.setState({ largeImageURL: e.target.id });
+
     this.toggleModal();
   };
 
@@ -128,7 +111,7 @@ export class App extends Component {
       loading,
       images,
       showModal,
-      currentImgInd,
+      largeImageURL,
       totalPhotos,
       showLoadMore,
     } = this.state;
@@ -136,7 +119,18 @@ export class App extends Component {
     return (
       <div className={css.app}>
         <Searchbar onSubmit={this.handleSubmit} />
-        <ToastContainer />
+        <ToastContainer
+          position="top-right"
+          autoClose={4000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+        />
         {loading && <Loader />}
 
         <ImageGallery images={images} onClick={this.currentPhoto} />
@@ -148,8 +142,7 @@ export class App extends Component {
         {showModal && (
           <Modal
             onClose={this.toggleModal}
-            photos={images}
-            currentImgInd={currentImgInd}
+            largeImageURL={largeImageURL}
           ></Modal>
         )}
       </div>
