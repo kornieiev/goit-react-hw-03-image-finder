@@ -31,7 +31,10 @@ export class App extends Component {
     const nextPage = this.state.page;
 
     if (prevSearch !== nextSearch || prevPage !== nextPage) {
-      this.setState({ loading: true, showLoadMore: false });
+      this.setState({
+        loading: true,
+        showLoadMore: false,
+      });
       fetchPhotos(nextSearch, nextPage)
         .then(data => {
           this.setState({ totalPhotos: data.total });
@@ -69,25 +72,15 @@ export class App extends Component {
     }));
   };
 
-  handleChange = e => {
-    this.setState({ inputValue: e.target.value.toLowerCase().trim() });
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    const searchValue = e.currentTarget.elements.input.value;
-    if (searchValue.trim() === '') {
-      toast.warn('УПС! 🫤 Введіть значення для пошуку ⌨️ ');
-      return;
-    } else {
-      this.setState({
-        inputValue: searchValue,
-        loading: true,
-        images: [],
-        page: 1,
-        showLoadMore: false,
-      });
-    }
+  handleSubmit = searchValue => {
+    console.log('searchValue', searchValue);
+    this.setState({
+      inputValue: searchValue,
+      loading: true,
+      images: [],
+      page: 1,
+      showLoadMore: false,
+    });
   };
 
   toggleModal = () => {
@@ -102,7 +95,10 @@ export class App extends Component {
   };
 
   renderMore = async () => {
-    this.setState(prevState => ({ page: prevState.page + 1, isLoading: true }));
+    this.setState(prevState => ({
+      page: prevState.page + 1,
+      // isLoading: true
+    }));
   };
 
   render() {
